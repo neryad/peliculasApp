@@ -57,7 +57,7 @@ export class PeliculasService {
     }).pipe(catchError(err => of(null)));
   }
 
-  getCast( id: string):Observable<Cast[]>{
+  getCast( id: string): Observable<Cast[]>{
     return this.http.get<CreditsResponse>(`${this.baseUrl}/movie/${id}/credits`, {
       params: this.params
     }).pipe(map(res => res.cast), catchError(err => of([])));

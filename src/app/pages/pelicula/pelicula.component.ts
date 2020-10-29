@@ -4,6 +4,7 @@ import { PeliculasService } from 'src/app/services/peliculas.service';
 import { MovieResponse } from 'src/app/interfaces/movie-response';
 import { Location } from '@angular/common';
 import { Cast } from 'src/app/interfaces/credist-response';
+import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-pelicula',
@@ -23,19 +24,40 @@ export class PeliculaComponent implements OnInit {
 
   ngOnInit(): void {
     const id = this.activatedRoute.snapshot.params.id;
-    this.peliculasService.getPeliculaDetalle(id).subscribe(movie => {
-      if(!movie) {
+
+    combineLatest([
+      this.peliculasService.getPeliculaDetalle(id),
+      this.peliculasService.getCast(id)
+
+    ]).subscribe(([pelicula, cast]) => {
+
+      console.log(pelicula, cast);
+      if(!pelicula) {
         this.router.navigateByUrl('/home');
         return;
       }
-      this.pelicula = movie;
+      this.pelicula = pelicula;
 
-    });
-
-    this.peliculasService.getCast(id).subscribe(cast => {
       this.cast = cast.filter(actor => actor.profile_path != null);
 
     });
+
+
+
+
+    // this.peliculasService.getPeliculaDetalle(id).subscribe(movie => {
+    //   if(!movie) {
+    //     this.router.navigateByUrl('/home');
+    //     return;
+    //   }
+    //   this.pelicula = movie;
+
+    // });
+
+    // this.peliculasService.getCast(id).subscribe(cast => {
+    //   this.cast = cast.filter(actor => actor.profile_path != null);
+
+    // });
   }
     onRegresar(){
       this.location.back();
